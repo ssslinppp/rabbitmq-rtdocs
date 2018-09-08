@@ -13,7 +13,7 @@ http://192.168.35.138:15672/cli/
 ```
 
 ## 命令
-
+```
 [root@rmq-node1 opt]# rabbitmqadmin help subcommands
 Usage
 =====
@@ -78,4 +78,4 @@ Publishing and Consuming
     standard output along with the message metadata
 
   * If payload_file is specified on get, count must not be set
-
+```
