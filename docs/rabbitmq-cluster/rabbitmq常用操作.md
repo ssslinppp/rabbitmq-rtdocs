@@ -10,5 +10,10 @@ rabbitmqctl set_permissions -p / root ".*" ".*" ".*"
 rabbitmqctl set_user_tags root administrator
 ```
 
+## 集群状态report
+包括各node的status、cluster_status、Connections、Channels、Queues、Exchanges、Bindings、Consumers、Application environment等等
+```
+rabbitmqctl report > report.txt
+```
 
 
