@@ -32,7 +32,8 @@
 ##  The Original Code is RabbitMQ.
 ##
 ##  The Initial Developer of the Original Code is GoPivotal, Inc.
-##  Copyright (c) 2012-2015 Pivotal Software, Inc.  All rights reserved.
+##  Copyright (c) 2012-20
+15 Pivotal Software, Inc.  All rights reserved.
 ##
 
 ### next line potentially updated in package install steps
@@ -72,7 +73,7 @@ case "$RABBITMQ_HOME" in
         ;;
 esac
 
-CONF_ENV_FILE=${SYS_PREFIX}/etc/rabbitmq/rabbitmq-env.conf
+CONF_ENV_FILE=${SYS_PREFIX}/etc/rabbitmq/rabbitmq-env.conf  # 指定了配置文件的位置
 
 ```
 
