@@ -144,6 +144,23 @@ net.ipv4.tcp_tw_reuse
 ---
 
 ## 运行时参数和策略
+rabbitmq有两种类型的参数：
+1. vhost级别的Parameter
+2. global级别的Parameter
 
+### vhost级别参数
+```
+rabbitmqctl:
+set_parameter [-p <vhost>] <component_name> <name> <value>
+clear_parameter [-p <vhost>] <component_name> <key>
+list_parameters [-p <vhost>]
+```
 
+### global级别参数
+```
+rabbitmqctl:
+set_global_parameter <name> <value>
+clear_global_parameter <name>
+list_global_parameters
+```
 
