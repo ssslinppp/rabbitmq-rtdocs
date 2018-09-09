@@ -83,12 +83,67 @@ CONF_ENV_FILE=${SYS_PREFIX}/etc/rabbitmq/rabbitmq-env.conf  # 指定了配置文
 
 
 ## 配置文件
+- [Configuration File(s)](https://www.rabbitmq.com/configure.html#configuration-files)     
+- [rabbitmq.conf.example](https://github.com/rabbitmq/rabbitmq-server/blob/master/docs/rabbitmq.conf.example)      
+
+- 在终端查看config.example
+```
+[root@rmq-node1 ~]# rpm -ql rabbitmq-server |grep config
+/usr/share/doc/rabbitmq-server-3.6.12/rabbitmq.config.example
+```
+
 #### 配置文件位置
 1. 通过rabbitmq的日志：`config files`
 2. 通过`ps aux|grep rabbit | grep config`
 
+#### 网络配置(抛砖引玉)
+##### tcp_listeners
+设置监听的端口
+
+##### tcp_listen_options
+设置tcp的缓存大小（默认192K），缓存大，则吞吐量高，占用内存也会变高，但是并发量会变少。     
+一般取值在`88KB`~`128KB`之间。
+```
+tcp_listen_options.buffer = 196608
+tcp_listen_options.sndbuf = 196608
+tcp_listen_options.recbuf = 196608
+```
+
+当连接数量到达数万或更多时，重要的是确保rabbit服务器能够接受入站连接。未接受的TCP连接将会放在有`长度限制`的队列中，可通过如下参数设置
+```
+# 队列中`未接受连接`的最大数目。当达到此值时，新连接会被拒绝
+# 如果有成千上万的并发连接环境或者存在大量客户重新连接的场景，可以设置为 4096 或更高
+tcp_listen_options.backlog = 128 
+```
+当挂起的连接队列的长度超过此值时，连接将被操作系统拒绝。
+
+##### Nagle算法的enable/disable
+禁用Nagle算法：用于减少延时
+```
+tcp_listen_options.nodelay = true  # true:禁用Nagle算法
+```
+
+##### 设置Erlang运行时线程池的大小
+`RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS="+A 128"`
+
+##### 设置文件句柄数
+1. 大部分操作系统都限制了同一时间可以打开的文件句柄数；
+2. TCP连接会占用文件句柄，例如，如果需要支撑10万个TCP连接，则可以设置文件句柄数为15万。
+
+##### 操作系统相关参数
+文件位置：`/etc/sysctl.conf`(注意不是rabbitmq.config)       
+
+```
+fs.file-max # 内核分配的最大文件句柄数，`cat /proc/sys/fs/file-nr `可以查看系统的极限值和当前值
+net.ipv4.ip_local_port_range: 本地IP端口范围
+net.ipv4.tcp_tw_reuse
+...
+```
 
 
-
+---
 
 ## 运行时参数和策略
+
+
+
