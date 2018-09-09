@@ -77,7 +77,18 @@ CONF_ENV_FILE=${SYS_PREFIX}/etc/rabbitmq/rabbitmq-env.conf  # 指定了配置文
 
 ```
 
+生产环境中不建议修改rabbitmq的环境变量，下面的几个可能会用到：
+- RABBITMQ_CONFIG_FILE: 配置文件地址
+- RABBITMQ_CONF_ENV_FILE： 环境变量的配置文件的地址
+
 
 ## 配置文件
+#### 配置文件位置
+1. 通过rabbitmq的日志：`config files`
+2. 通过`ps aux|grep rabbit | grep config`
+
+
+
+
 
 ## 运行时参数和策略
