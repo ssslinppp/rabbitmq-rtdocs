@@ -148,7 +148,7 @@ rabbitmq有两种类型的参数：
 1. vhost级别的Parameter
 2. global级别的Parameter
 
-### vhost级别参数
+#### vhost级别参数
 ```
 rabbitmqctl:
 set_parameter [-p <vhost>] <component_name> <name> <value>
@@ -156,11 +156,58 @@ clear_parameter [-p <vhost>] <component_name> <key>
 list_parameters [-p <vhost>]
 ```
 
-### global级别参数
+#### global级别参数
 ```
 rabbitmqctl:
 set_global_parameter <name> <value>
 clear_global_parameter <name>
 list_global_parameters
 ```
+
+### 策略（Policy）
+策略存在的意义：    
+通过Client设定的一些属性，一旦设置成功`就不能在修改`，除非删除原来的Exchange或Queue，然后重新创建。
+
+policy是`vhost级别的Param`。      
+一个Policy可以匹配1个或多个Queue、Exchange，便于批量管理。     
+
+Policy支持动态的修改一些属性。常用来配置Federation、镜像、备份交换机、死信队列等。
+
+
+```
+rabbitmqctl: 
+set_policy [-p <vhost>] [--priority <priority>] [--apply-to <apply-to>] 
+clear_policy [-p <vhost>] <name>
+list_policies [-p <vhost>]
+```
+
+man 
+```
+set_policy [-p vhost] [--priority priority] [--apply-to apply-to] {name} {pattern} {definition}
+           Sets a policy.
+
+           name
+               The name of the policy.
+
+           pattern ：用来匹配相关的Exchange或Queue
+               The regular expression, which when matches on a given resources causes the policy to apply.
+
+           definition: 为匹配的Exchange或Queue附加相应的功能
+               The definition of the policy, as a JSON term. In most shells you are very likely to need to quote this.
+
+           priority：
+               The priority of the policy as an integer. Higher numbers indicate greater precedence. The default is 0.
+
+           apply-to：用来指定当前Policy作用于哪一方。
+               Which types of object this policy should apply to - "queues", "exchanges" or "all". The default is "all".
+
+           For example: 设置默认的vhost中所有以"^amp."开头的Exchange为联邦交换器
+
+           rabbitmqctl set_policy --apply-to exchanges federate-me "^amq." '{"federation-upstream-set":"all"}'
+
+           This command sets the policy federate-me in the default virtual host so that built-in exchanges are federated.
+
+```
+
+
 
