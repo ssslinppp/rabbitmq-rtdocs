@@ -1,4 +1,7 @@
+## 介绍
+RabbitMQ集群对延时非常敏感，应当只在本地局域网内使用。在广域网中不应该使用集群，而应该使用Federation或者Shovel来代替。
 
+---
 
 ## 安装rabbitmq-server
 总共有3台虚拟机，都安装有rabbitmq服务，安装过程可参考：
