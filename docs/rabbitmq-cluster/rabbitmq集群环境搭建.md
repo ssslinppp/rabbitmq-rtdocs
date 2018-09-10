@@ -7,6 +7,8 @@ RabbitMQ集群对延时非常敏感，应当只在本地局域网内使用。在
 总共有3台虚拟机，都安装有rabbitmq服务，安装过程可参考：
 [【rabbitmq】Centos7 下安装rabbitmq](https://www.cnblogs.com/ssslinppp/p/7707336.html)   
 
+---
+
 ### 创建用户和vhost
 说明： 此步骤不是必须的，文章后面的用户和vhost可能与此步骤创建的不一致，此处仅仅是创建的示例。
 
@@ -22,6 +24,8 @@ rabbitmqctl set_permissions -p /my_vhost admin ".*"  ".*" ".*"
 
 rabbitmqctl list_permissions -p /my_vhost
 ```
+
+---
 
 ### 机器列表
 
@@ -72,6 +76,7 @@ scp root@192.168.35.135:/var/lib/rabbitmq/.erlang.cookie /var/lib/rabbitmq/.erla
 chmod 400 /var/lib/rabbitmq/.erlang.cookie
 chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
 ```
+
 
 ### 修改hosts文件
 ```
