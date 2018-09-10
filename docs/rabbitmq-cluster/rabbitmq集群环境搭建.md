@@ -77,6 +77,7 @@ chmod 400 /var/lib/rabbitmq/.erlang.cookie
 chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
 ```
 
+---
 
 ### 修改hosts文件
 ```
@@ -94,6 +95,14 @@ vi /etc/hosts
 ping rmq-node1
 ping rmq-node2
 ping rmq-node3
+```
+
+---
+### 各节点启动rabbitmq服务
+```
+node1: rabbitmq-server -detached (systemctl restart rabbitmq-server)
+node2: rabbitmq-server -detached (systemctl restart rabbitmq-server)
+node3: rabbitmq-server -detached (systemctl restart rabbitmq-server)
 ```
 
 ### 将node2节点和node3节点加入集群
