@@ -104,8 +104,24 @@ node1: rabbitmq-server -detached (systemctl restart rabbitmq-server)
 node2: rabbitmq-server -detached (systemctl restart rabbitmq-server)
 node3: rabbitmq-server -detached (systemctl restart rabbitmq-server)
 ```
+这样，3个node目前都是以**独立节点存在的单个集群**。   
+
+查看各节点的集群状态（示例仅演示了node1，其他2个node类似）
+```
+[root@rmq-node1 ~]# rabbitmqctl  cluster_status
+Cluster status of node 'rabbit@rmq-node1'
+[{nodes,[{disc,['rabbit@rmq-node1']}]},   //此时只有一个节点
+ {running_nodes,['rabbit@rmq-node1']},
+ {cluster_name,<<"rabbit@rmq-node1">>},
+ {partitions,[]},
+ {alarms,[{'rabbit@rmq-node1',[]}]}]
+```
+
 
 ### 将node2节点和node3节点加入集群
+为了将3个node组成一个集群，需要以node1节点为基准，将node2和node3节点加入node1节点的集群中。   
+这3个节点是平等的，如果想调换彼此的加入顺序，也未尝不可。
+
 #### node2和node3加入集群前，node1的状态
 ```
 [root@rmq-node1 ~]# rabbitmqctl  cluster_status
@@ -131,7 +147,7 @@ Cluster status of node 'rabbit@rmq-node2'
 
 ```
 
-加入集群
+加入集群（4个命令）
 ```
 # stop application and reset
 rabbitmqctl stop_app 
@@ -151,7 +167,7 @@ rabbitmqctl cluster_status
 ```
 [root@rmq-node1 ~]# rabbitmqctl  cluster_status
 Cluster status of node 'rabbit@rmq-node1'
-[{nodes,[{disc,['rabbit@rmq-node1','rabbit@rmq-node2']}]},
+[{nodes,[{disc,['rabbit@rmq-node1','rabbit@rmq-node2']}]},   //此时node2已经加入集群
  {running_nodes,['rabbit@rmq-node2','rabbit@rmq-node1']},
  {cluster_name,<<"rabbit@rmq-node1">>},
  {partitions,[]},
@@ -180,7 +196,7 @@ Cluster status of node 'rabbit@rmq-node3'
 
 ```
 
-加入集群
+加入集群（4个步骤）
 ```
 # stop application and reset
 rabbitmqctl stop_app 
@@ -201,7 +217,7 @@ rabbitmqctl cluster_status
 [root@rmq-node1 ~]# rabbitmqctl  cluster_status
 Cluster status of node 'rabbit@rmq-node1'
 [{nodes,[{disc,['rabbit@rmq-node1','rabbit@rmq-node2']},
-         {ram,['rabbit@rmq-node3']}]},
+         {ram,['rabbit@rmq-node3']}]},      //此时node3已经加入集群
  {running_nodes,['rabbit@rmq-node3','rabbit@rmq-node2','rabbit@rmq-node1']},
  {cluster_name,<<"rabbit@rmq-node1">>},
  {partitions,[]},
@@ -236,8 +252,15 @@ Cluster status of node 'rabbit@rmq-node3'
 
 ```
 
+---
+
 ## 登录界面查看集群状态
 http://192.168.35.135:15672/#/
+
+---
+
+# 集群节点关闭的处理
+
 
 ---
 ## 相关概念
@@ -284,7 +307,7 @@ rm -rf /var/lib/rabbitmq/mnesia/*
 ---
 
 # 出现的错误
-## 1. 启动失败：rabbitmq-server.service: control process exited, code=exited status=75
+### 1. 启动失败：rabbitmq-server.service: control process exited, code=exited status=75
 
 ```
 journalctl -xe
