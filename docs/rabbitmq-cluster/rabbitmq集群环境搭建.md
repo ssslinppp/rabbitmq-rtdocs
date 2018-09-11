@@ -259,8 +259,44 @@ http://192.168.35.135:15672/#/
 
 ---
 
-# 集群节点关闭的处理
+## 集群节点关闭的处理
+### 如果node2关闭了，则集群会处于什么状态？
+模拟node2关闭，在node2上执行：
+```
+# 在node2上执行
+[root@rmq-node2 ~]# rabbitmqctl stop_app   (rabbitmq的服务停止，但是erlang虚拟机还在运行)
+```
 
+在node1上查看当前集群状态
+```
+# 在node1上执行
+[root@rmq-node1 ~]# rabbitmqctl cluster_status
+Cluster status of node 'rabbit@rmq-node1'
+[{nodes,[{disc,['rabbit@rmq-node1','rabbit@rmq-node2']},
+         {ram,['rabbit@rmq-node3']}]},
+ {running_nodes,['rabbit@rmq-node3','rabbit@rmq-node1']},  #重点：此时已经没有 rabbit@rmq-node2 这一节点
+ {cluster_name,<<"rabbit@rmq-node1">>},
+ {partitions,[]},
+ {alarms,[{'rabbit@rmq-node3',[]},
+          {'rabbit@rmq-node1',[]},
+          {'rabbit@rmq-node2',[]}]}]
+```
+
+### 如果关闭了集群中的所有节点，如何重启集群？
+如果关闭了集群中的所有节点，则需要确保在启动的时候**最后关闭的那个节点是第一个启动的**。    
+
+如果第一个启动的**不是最后关闭**的节点，那么这个节点会**等待**最后那个关闭的节点启动。这个等待时间默认为30s，默认会重试10次。如果10次之后，还未等到最后关闭的节点启动，则当前节点也会因失败而关闭自身的应用。（可以通过查看rabbit的**日志**来查看）
+
+### 集群掉电，所有节点同时挂掉的场景
+此时所有node都认为自己**并不是最后一个**关闭的。如果在各node上尝试重启，最终都会失败，因为node会等待集群中最后一个关闭的node，为了防止这种情况发生，可以使用如下命名重启：
+```
+rabbitmqctl force_boot # 确保节点可以启动，即使它不是最后一个关闭的节点==>无条件的启动节点，可能会造成数据lost
+```
+
+### 如果最后关闭的node最终无法启动，如何处理？==>将该node从集群中剔除
+```
+rabbitmqctl forget_cluster_node --offline
+```
 
 ---
 ## 相关概念
